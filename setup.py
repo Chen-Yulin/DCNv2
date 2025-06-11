@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import glob
 import os
 
@@ -20,19 +18,20 @@ def get_extensions():
     os.environ["CC"] = "g++"
     sources = main_file + source_cpu
     extension = CppExtension
-    extra_compile_args = {"cxx": []}
+    extra_compile_args = {"cxx": ['-O3']}
     define_macros = []
 
-    
     if torch.cuda.is_available() and CUDA_HOME is not None:
         extension = CUDAExtension
         sources += source_cuda
         define_macros += [("WITH_CUDA", None)]
         extra_compile_args["nvcc"] = [
+            "-O3",
             "-DCUDA_HAS_FP16=1",
             "-D__CUDA_NO_HALF_OPERATORS__",
             "-D__CUDA_NO_HALF_CONVERSIONS__",
             "-D__CUDA_NO_HALF2_OPERATORS__",
+            "-D__CORRECT_ISO_CPP11_MATH_H_PROTO",
         ]
     else:
         # raise NotImplementedError('Cuda is not available')
